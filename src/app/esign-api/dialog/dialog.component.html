@@ -1,0 +1,30 @@
+<b>{{ title }}</b>
+<p>{{ message }}</p>
+
+
+<p style="color:red" [hidden]="!valueIncorrect">The answer is incorrect! You will have one more question to verify your identity.</p>
+
+<app-question></app-question>
+
+<span style="color:blue">{{status}} - {{questions.applicationName}}</span>
+
+<br/>
+
+
+
+<form style="padding:15px;">
+    <p>{{questions.question[0].question}}</p>
+    <mat-form-field>
+      <mat-select placeholder="In what year were you born?" [(ngModel)]="selectedValue" name="year">
+        <mat-option *ngFor="let year of years">
+          {{year}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    
+    
+  </form>
+{{data.years}}
+
+<button type="button" mat-raised-button [disabled]="true"
+    (click)="dialogSubmit(false)" style="float:right">Submit</button>
