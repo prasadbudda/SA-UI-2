@@ -105,7 +105,7 @@ export class DialogComponent implements OnInit {
     this.getQuestions();
     this.generateYears(this.startYear, this.endYear);
     if (this.status = "success") {
-      let dialogRef = this.dialog.open(DialogOverview, {
+      let dialogRef = this.dialog.open(DialogComponent, {
         width: '500px'
       });
 
@@ -119,20 +119,4 @@ export class DialogComponent implements OnInit {
   }
 
 }
-@Component({
-  selector: 'dialog-overview',
-  templateUrl: 'dialog.component.html',
-})
-export class DialogOverview {
 
-  constructor(
-    public dialogRef: MatDialogRef<DialogOverview>,
-    @Inject(MAT_DIALOG_DATA) public data: any) {
-
-  }
-
-  onNoClick(): void {
-    this.dialogRef.close();
-  }
-
-}

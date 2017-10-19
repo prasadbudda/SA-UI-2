@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { MatDialogModule, MatButtonModule, MatCheckboxModule, MatSelectModule } from '@angular/material';
 
 import { QuestionComponent } from './question/question.component';
-import { DialogComponent,DialogOverview } from './dialog.component';
+import { DialogComponent } from './dialog.component';
 import { DialogService } from './dialog.service';
 
 @NgModule({
@@ -22,8 +22,8 @@ import { DialogService } from './dialog.service';
     ],
     declarations: [
         QuestionComponent,
-        DialogComponent,
-        DialogOverview
+        DialogComponent
+        
         
     ],
     providers: [
@@ -31,8 +31,8 @@ import { DialogService } from './dialog.service';
     ],
     entryComponents: [
         QuestionComponent,
-        DialogComponent,
-        DialogOverview
+        DialogComponent
+        
     ],
 })
 export class DialogModule { }

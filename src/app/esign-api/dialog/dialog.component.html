@@ -1,22 +1,16 @@
 <b>{{ title }}</b>
-<p>{{ message }}</p>
+<b>Verification</b>
 
 
 <p style="color:red" [hidden]="!valueIncorrect">The answer is incorrect! You will have one more question to verify your identity.</p>
 
-<app-question></app-question>
-
-<span style="color:blue">{{status}} - {{questions.applicationName}}</span>
-
-<br/>
 
 
 
 <form style="padding:15px;">
-    <p>{{questions.question[0].question}}</p>
     <mat-form-field>
       <mat-select placeholder="In what year were you born?" [(ngModel)]="selectedValue" name="year">
-        <mat-option *ngFor="let year of years">
+        <mat-option *ngFor="let year of years" [value]="year">
           {{year}}
         </mat-option>
       </mat-select>
@@ -24,7 +18,6 @@
     
     
   </form>
-{{data.years}}
 
-<button type="button" mat-raised-button [disabled]="true"
-    (click)="dialogSubmit(false)" style="float:right">Submit</button>
+<button type="button" color="primary" mat-raised-button [disabled]="!selectedValue"
+    (click)="dialogSubmit(false)" style="float:right;">Submit</button>
