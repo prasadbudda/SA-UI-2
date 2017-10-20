@@ -1,10 +1,10 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { MatDialogModule, MatButtonModule, MatCheckboxModule, MatSelectModule } from '@angular/material';
+import { MatDialogModule, MatButtonModule, MatCheckboxModule, MatSelectModule, MatInputModule } from '@angular/material';
 
 import { QuestionComponent } from './question/question.component';
-import { DialogComponent } from './dialog.component';
+import { DialogComponent, DialogOverview } from './dialog.component';
 import { DialogService } from './dialog.service';
 
 @NgModule({
@@ -13,6 +13,7 @@ import { DialogService } from './dialog.service';
         MatButtonModule,
         MatCheckboxModule,
         MatSelectModule,
+        MatInputModule,
         CommonModule,
         FormsModule
     ],
@@ -22,8 +23,8 @@ import { DialogService } from './dialog.service';
     ],
     declarations: [
         QuestionComponent,
-        DialogComponent
-        
+        DialogComponent,
+        DialogOverview
         
     ],
     providers: [
@@ -31,8 +32,8 @@ import { DialogService } from './dialog.service';
     ],
     entryComponents: [
         QuestionComponent,
-        DialogComponent
-        
+        DialogComponent,
+        DialogOverview
     ],
 })
 export class DialogModule { }

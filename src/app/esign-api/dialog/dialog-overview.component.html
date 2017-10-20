@@ -1,0 +1,19 @@
+<b>Verification</b>
+
+<p style="color:red" [hidden]="!valueIncorrect">The answer is incorrect! You will have one more question to verify your identity.</p>
+
+<div class="overview-form" style="padding:10px 0px;">
+    <mat-form-field [hidden]="!qOne" >
+        <mat-select placeholder={{question[0].question}} [(ngModel)]="selectedYear" name="year">
+            <mat-option *ngFor="let year of years" [value]="year">
+                {{year}}
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
+
+    <mat-form-field class="overview-full-width" [hidden]="!qTwo">
+        <input matInput [(ngModel)]="zipcodeValue" placeholder={{question[0].question}} style="width:100%">
+    </mat-form-field>
+</div>
+
+<button type="button" color="primary" mat-raised-button [disabled]="!selectedYear" (click)="dialogSubmit(question[0].id)" style="float:right;">Submit</button>

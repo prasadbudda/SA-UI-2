@@ -27,7 +27,7 @@ export class DialogComponent implements OnInit {
   years = [];
   startYear = 1960;
   endYear = 2017;
-  selectedValue: string;
+  selectedYear: string;
 
   constructor(private http: HttpClient, private route: ActivatedRoute, public dialog: MatDialog,
 
@@ -61,7 +61,68 @@ export class DialogComponent implements OnInit {
         );
         */
 
-    this.questions = {
+  
+
+  }
+
+  dialogSubmit(value) {
+    if (value == false) {
+      this.valueIncorrect = true;
+
+    }
+  }
+
+  openDlg(){
+    let dialogRef = this.dialog.open(DialogOverview, {
+      width: '500px'
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('The dialog was closed');
+    });
+  }
+  ngOnInit() {
+    let headers = new Headers;
+    this.getQuestions();
+    this.openDlg();
+     
+  }
+
+}
+
+@Component({
+  selector: 'dialog-overview',
+  templateUrl: 'dialog-overview.component.html',
+  styleUrls: ['./dialog-overview.component.css']
+})
+export class DialogOverview implements OnInit {
+
+  constructor(
+    public dialogRef: MatDialogRef<DialogOverview>,
+    @Inject(MAT_DIALOG_DATA) public data: any) { 
+      this.generateYears(this.startYear, this.endYear);
+      this.questions;
+      
+    }
+
+    years = [];
+    startYear = 1960;
+    endYear = 2017;
+    selectedYear;
+    valueIncorrect;
+    question:IQuestions[] = [];
+    qOne;
+    qTwo;
+    zipcodeValue;
+
+    generateYears(start, end) {
+      for (let year = start; year <= end; year++) {
+        this.years.push(year)
+      }
+      return this.years;
+    };
+
+    questions = {
       esignHeader: {
         transactionLogId: "Id",
         responseStatus: "success",
@@ -75,48 +136,50 @@ export class DialogComponent implements OnInit {
       question: [{
         id: 1,
         question: "In what year were you born?",
-        answer: "1952"
-      },
-      {
-        id: 2,
-        question: "what is the ZIP Code where you e?",
-        answer: "35801"
+        answer: "1962"
+      },{
+        id: 1,
+        question: "what is the ZIP Code where you live",
+        answer: "531001"
       }]
     };
 
-  }
+    mockData:IQuestions[] = [{
+      id: 1,
+      question: "In what year were you born?",
+      answer: "1962"
+    },{
+      id: 2,
+      question: "What is the ZIP Code where you live?",
+      answer: "531001"
+    }];
 
-  generateYears(start, end) {
-    for (let year = start; year <= end; year++) {
-      this.years.push(year)
+    dialogSubmit(qid){
+      if(qid == 1){
+      if (this.selectedYear == this.question[0].answer) {
+        this.valueIncorrect = false;
+        this.dialogRef.close();
+      }
+      else{
+        this.qOne = false;
+        this.valueIncorrect = true;
+        this.question = [];
+        this.question.push(this.mockData[1]);
+        this.qTwo = true;
+      }
     }
-    return this.years;
-  }
-
-  dialogSubmit(value) {
-    if (value == false) {
-      this.valueIncorrect = true;
-
+    else if(qid == 2){
+     alert(this.zipcodeValue);
     }
-  }
-
-  ngOnInit() {
-    let headers = new Headers;
-    this.getQuestions();
-    this.generateYears(this.startYear, this.endYear);
-    if (this.status = "success") {
-      let dialogRef = this.dialog.open(DialogComponent, {
-        width: '500px'
-      });
-
-      dialogRef.afterClosed().subscribe(result => {
-        console.log('The dialog was closed');
-      });
     }
-    else {
-      alert("msg");
+    
+    ngOnInit(){
+      this.question.push(this.mockData[0]);
+      this.qOne = true;
     }
+
+  onNoClick(): void {
+    this.dialogRef.close();
   }
 
 }
-
