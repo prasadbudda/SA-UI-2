@@ -28,7 +28,8 @@ export class DialogComponent implements OnInit {
   startYear = 1960;
   endYear = 2017;
   selectedYear: string;
-
+  sampleData = "Test msg";
+  
   constructor(private http: HttpClient, private route: ActivatedRoute, public dialog: MatDialog,
 
     private apiService: EsignApiService
@@ -74,7 +75,8 @@ export class DialogComponent implements OnInit {
 
   openDlg(){
     let dialogRef = this.dialog.open(DialogOverview, {
-      width: '500px'
+      width: '500px',
+      data: { name: this.sampleData }
     });
 
     dialogRef.afterClosed().subscribe(result => {
