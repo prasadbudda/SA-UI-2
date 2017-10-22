@@ -15,5 +15,9 @@
         <input matInput [(ngModel)]="zipcodeValue" placeholder={{question[0].question}} style="width:100%">
     </mat-form-field>
 </div>
-{{data.name}}
+<ul>
+    <li *ngFor = "let d of data.mock.choices">{{d.question}}</li>
+ </ul>
+
+ {{data.mock.challenge}}
 <button type="button" color="primary" mat-raised-button [disabled]="!selectedYear" (click)="dialogSubmit(question[0].id)" style="float:right;">Submit</button>

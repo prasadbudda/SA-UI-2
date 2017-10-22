@@ -28,7 +28,16 @@ export class DialogComponent implements OnInit {
   startYear = 1960;
   endYear = 2017;
   selectedYear: string;
-  sampleData = "Test msg";
+  sampleData = {
+    id: "1234",
+    challenge: "some challenge",
+    status: "some status",
+    choices: [{
+      question: "question 1"
+    },{
+      question: "question 2"
+    }]
+  }
   
   constructor(private http: HttpClient, private route: ActivatedRoute, public dialog: MatDialog,
 
@@ -76,7 +85,7 @@ export class DialogComponent implements OnInit {
   openDlg(){
     let dialogRef = this.dialog.open(DialogOverview, {
       width: '500px',
-      data: { name: this.sampleData }
+      data: { mock: this.sampleData }
     });
 
     dialogRef.afterClosed().subscribe(result => {
