@@ -1,13 +1,15 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 
-import { ActivatedRoute, Params } from '@angular/router';
+import { Router,ActivatedRoute, Params } from '@angular/router';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { EsignApiService } from '../shared/esign-api.service';
 import { IUserQuestions } from '../interfaces/IUserQuestions';
 import { IQuestions } from '../interfaces/IUserQuestions';
 import { HttpErrorResponse } from '@angular/common/http';
 import { QuestionComponent } from './question/question.component';
+import { DialogService } from './dialog.service';
+import 'rxjs/Rx';
 
 @Component({
   selector: 'app-dialog',
@@ -28,18 +30,12 @@ export class DialogComponent implements OnInit {
   startYear = 1960;
   endYear = 2017;
   selectedYear: string;
-  sampleData = {
-    id: "1234",
-    challenge: "some challenge",
-    status: "some status",
-    choices: [{
-      question: "question 1"
-    },{
-      question: "question 2"
-    }]
-  }
+
+
+  challenges:any = {};
   
-  constructor(private http: HttpClient, private route: ActivatedRoute, public dialog: MatDialog,
+
+  constructor(private http: HttpClient, private route: ActivatedRoute, public dialog: MatDialog, public dialogService : DialogService,
 
     private apiService: EsignApiService
   ) {
@@ -50,55 +46,36 @@ export class DialogComponent implements OnInit {
       this.appName = params['appName'];
     });
     this.esignAPIUrl = this.apiService.getESignAPIUrl();
-
-  }
-
-  getQuestions() {
-    /*  const headers = new HttpHeaders().append('LOB', this.lineOfBusiness)
-      .append('applicationName', this.appName)
-      const url = `${this.esignAPIUrl}/${this.guid}/questions`;
-        return this.http.get<IUserQuestions>(url, {headers: headers}).subscribe( data => {
-          this.questions = data;
-          this.status = "success";
-         },
-         (err: HttpErrorResponse) => {
-          console.log(err.error);
-          console.log(err.name);
-          console.log(err.message);
-          console.log(err.status);
-          this.status = err.error;
-        }
-        );
-        */
-
-  
-
-  }
-
-  dialogSubmit(value) {
-    if (value == false) {
-      this.valueIncorrect = true;
-
-    }
   }
 
   openDlg(){
     let dialogRef = this.dialog.open(DialogOverview, {
       width: '500px',
-      data: { mock: this.sampleData }
+      data: [this.challenges] 
     });
 
     dialogRef.afterClosed().subscribe(result => {
       console.log('The dialog was closed');
     });
   }
+
   ngOnInit() {
     let headers = new Headers;
-    this.getQuestions();
-    this.openDlg();
-     
+    this.dialogService
+    .getChallenges(1)
+    .subscribe(
+      res => {
+        console.log(res);
+         this.challenges = res;
+         this.openDlg();
+    },
+    err => {
+        console.log(err );
+    }
+      
+    
+    );
   }
-
 }
 
 @Component({
@@ -110,10 +87,10 @@ export class DialogOverview implements OnInit {
 
   constructor(
     public dialogRef: MatDialogRef<DialogOverview>,
-    @Inject(MAT_DIALOG_DATA) public data: any) { 
+    @Inject(MAT_DIALOG_DATA) public data: any, public router: Router, public dialogService: DialogService) { 
       this.generateYears(this.startYear, this.endYear);
-      this.questions;
-      
+      this.challenges = this.data;
+      this.question = 0;
     }
 
     years = [];
@@ -121,10 +98,12 @@ export class DialogOverview implements OnInit {
     endYear = 2017;
     selectedYear;
     valueIncorrect;
-    question:IQuestions[] = [];
     qOne;
     qTwo;
     zipcodeValue;
+    question;
+    challenges;
+    tempChallenges;
 
     generateYears(start, end) {
       for (let year = start; year <= end; year++) {
@@ -133,59 +112,40 @@ export class DialogOverview implements OnInit {
       return this.years;
     };
 
-    questions = {
-      esignHeader: {
-        transactionLogId: "Id",
-        responseStatus: "success",
-        applicationName: "Esign",
-        authenticationToken: "token",
-      },
-      transactionLogId: "String",
-      responseStatus: "success",
-      applicationName: "ESign",
-      authenticationToken: "token",
-      question: [{
-        id: 1,
-        question: "In what year were you born?",
-        answer: "1962"
-      },{
-        id: 1,
-        question: "what is the ZIP Code where you live",
-        answer: "531001"
-      }]
-    };
-
-    mockData:IQuestions[] = [{
-      id: 1,
-      question: "In what year were you born?",
-      answer: "1962"
-    },{
-      id: 2,
-      question: "What is the ZIP Code where you live?",
-      answer: "531001"
-    }];
-
     dialogSubmit(qid){
       if(qid == 1){
-      if (this.selectedYear == this.question[0].answer) {
+      if (this.selectedYear == 1962) {
         this.valueIncorrect = false;
         this.dialogRef.close();
       }
       else{
+        this.dialogService
+        .getChallenges(2)
+        .subscribe(
+          res => {
+            console.log(res);
+             this.tempChallenges = res;
+             this.challenges.push(this.tempChallenges);
+             this.question = 1;
+        },
+        err => {
+            console.log(err );
+        });
+       
+        
         this.qOne = false;
         this.valueIncorrect = true;
-        this.question = [];
-        this.question.push(this.mockData[1]);
         this.qTwo = true;
       }
     }
     else if(qid == 2){
      alert(this.zipcodeValue);
+     this.dialogRef.close();
+     this.router.navigate(['/eDelivery']);
     }
     }
     
     ngOnInit(){
-      this.question.push(this.mockData[0]);
       this.qOne = true;
     }
 

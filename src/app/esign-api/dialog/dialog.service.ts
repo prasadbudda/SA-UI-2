@@ -1,22 +1,21 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Rx';
-import { MatDialogRef, MatDialog, MatDialogConfig } from '@angular/material';
-
+import { Http, Response, Headers, RequestOptions } from '@angular/http';
 import { DialogComponent } from './dialog.component';
+
+import 'rxjs/add/operator/map';
 
 @Injectable()
 export class DialogService {
 
-    constructor(private dialog: MatDialog) { }
+    constructor(private http: Http) { }
 
-    public confirm(title: string, message: string): Observable<boolean> {
-
-        let dialogRef: MatDialogRef<DialogComponent>;
-
-        dialogRef = this.dialog.open(DialogComponent);
-        dialogRef.componentInstance.title = title;
-        dialogRef.componentInstance.message = message;
-
-        return dialogRef.afterClosed();
-    }
+    private apiUrl = 'http://localhost:3000/challenges'; 
+  getChallenges(id) : Observable<Comment[]> {
+    
+             return this.http.get(this.apiUrl+"/"+id)
+                             .map((res:Response) => res.json())
+                             .catch((error:any) => Observable.throw(error.json().error || 'Server error'));
+    
+         }
 }

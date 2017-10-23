@@ -10,11 +10,7 @@ export class QuestionComponent implements OnInit {
     closeResult: string;
   constructor( private dialogsService: DialogService,) { }
 
-  public openDialog() {
-    this.dialogsService
-      .confirm('Verification', 'To proceed to E-Sign Autorization screens we’ll need to verify your identity. Please answer the question below.')
-     .subscribe(res => this.result = res);
-  }
+
 
   public temp = 0;
   
