@@ -1,20 +1,60 @@
-<b>Verification</b>
+<div *ngIf="responseMessage == 'success'; then challenge else errorPage"></div>
 
-<p style="color:red" [hidden]="!valueIncorrect">The answer is incorrect! You will have one more question to verify your identity.</p>
+<ng-template #challenge>
+        <h3><b>Verification Screen</b></h3>
+        <p><b>To proceed to E-Sign Authorization screens we'll need to verify your identity.<br>
+        Please answer the question below.
+        </b></p>
+        
+       
+        
+        <div class="overview-form" style="padding:10px 0px;">
+            <mat-form-field [hidden]="!qOne" >
+                <mat-select placeholder="{{challenges[0].challenge}}" [(ngModel)]="selectedYear" name="year">
+                    <mat-option *ngFor="let year of years" [value]="year">
+                        {{year}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+                 
+            <div>
+                <div [hidden]="!qOneInfo">
+                <div class="sa-ds-full" style="display: flex;" > 
+                <span class="sa-ds-thirty sa-grey">{{challenges[0].challenge}}</span>
+                <span class="sa-ds-seventy">
+                <mat-icon color="warn"style="margin: 5px;float: left;">warning</mat-icon>
+                <p style="color:red;padding: 5px 0px;">The answer is <b>incorrect</b>.
+                <br> You will have one more question to verify your identity.</p>
+                </span>
+                </div>
+            </div>
 
-<div class="overview-form" style="padding:10px 0px;">
-    <mat-form-field [hidden]="!qOne" >
-        <mat-select placeholder="{{challenges[0].challenge}}" [(ngModel)]="selectedYear" name="year">
-            <mat-option *ngFor="let year of years" [value]="year">
-                {{year}}
-            </mat-option>
-        </mat-select>
-    </mat-form-field>
-    
-    <mat-form-field class="overview-full-width" [hidden]="!qTwo">
-        <input matInput placeholder="{{challenges[question].challenge}}" [(ngModel)]="zipcodeValue" style="width:100%">
-    </mat-form-field>
-</div>
+            <div [hidden]="!qTwoInfo">
+                <div class="sa-ds-full" style="display: flex;">
+                        <span class="sa-ds-thirty sa-grey">{{challenges[question].challenge}}</span>
+                        <span class="sa-ds-seventy">
+                        <mat-icon color="warn"style="margin: 5px;float: left;">warning</mat-icon>
+                        <p style="color:red;padding: 5px 0px;">The answer is <b>incorrect</b>.
+                        </span>
+                        </div>
+                    </div>
+            <mat-form-field class="overview-full-width" [hidden]="!qTwo">
+                <input matInput placeholder="{{challenges[question].challenge}}" [(ngModel)]="zipcodeValue" style="width:100%">
+            </mat-form-field>
+            <p style="color:red;padding: 5px 0px;" [hidden]="!qTwoInfo">You have exceeded the number of allowable attempts.  Please contact <b>Customer Service</b> at <b>877-SAHELPS</b> to proceed with your request.</p>
+        </div>
+        </div>
+
+        <button  [hidden]="qTwoInfo" type="button" color="primary" mat-raised-button [disabled]="!selectedYear" (click)="dialogSubmit(challenges[question].id)" style="float:right;">Submit</button>
+        <button  [hidden]="!qTwoInfo" type="button" color="warn" mat-raised-button [disabled]="!selectedYear" (click)="dialogSubmit(challenges[question].id)" style="float:right;">Close</button>
+    </ng-template>
+<ng-template #errorPage>
+    <p>
+        You have exceeded the number of allowable attempts.  Please contact Customer Service at 877-SAHELPS.
+    </p>
+        <button type="button" color="warn" mat-raised-button (click)="closeDialog()" style="float:right;">Close</button> 
+</ng-template>
 
 
-<button type="button" color="primary" mat-raised-button [disabled]="!selectedYear" (click)="dialogSubmit(challenges[question].id)" style="float:right;">Submit</button>
+
+

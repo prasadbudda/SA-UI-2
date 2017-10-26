@@ -1,9 +1,18 @@
 .overview-form {
     min-width: 150px;
-    max-width: 500px;
     width: 100%;
   }
   
   .overview-full-width {
     width: 100%;
   }
+
+  .sa-grey{
+    color: grey
+  }
+  .sa-ds-thirty {
+    width: 30%
+   }
+  .sa-ds-seventy {
+     width: 70%
+    }

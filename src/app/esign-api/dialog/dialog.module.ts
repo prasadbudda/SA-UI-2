@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { MatDialogModule, MatButtonModule, MatCheckboxModule, MatSelectModule, MatInputModule } from '@angular/material';
+import { MatDialogModule, MatButtonModule, MatCheckboxModule, MatSelectModule, MatInputModule,MatIconModule } from '@angular/material';
 
 import { DialogComponent, DialogOverview } from './dialog.component';
 import { DialogService } from './dialog.service';
@@ -14,6 +14,7 @@ import { HttpModule } from '@angular/http'
         MatCheckboxModule,
         MatSelectModule,
         MatInputModule,
+        MatIconModule,
         CommonModule,
         FormsModule,
         HttpModule

@@ -1,15 +1,13 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 
-import { Router,ActivatedRoute, Params } from '@angular/router';
+import { Router, ActivatedRoute, Params } from '@angular/router';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { EsignApiService } from '../shared/esign-api.service';
-import { IUserQuestions } from '../interfaces/IUserQuestions';
-import { IQuestions } from '../interfaces/IUserQuestions';
 import { HttpErrorResponse } from '@angular/common/http';
-import { QuestionComponent } from './question/question.component';
 import { DialogService } from './dialog.service';
 import 'rxjs/Rx';
+import { IChallenges } from '../interfaces/IChallenges'; 
 
 @Component({
   selector: 'app-dialog',
@@ -24,12 +22,13 @@ export class DialogComponent implements OnInit {
   public message: string;
   public valueIncorrect = false;
   // public questions:any[] = [];
-  status: string;
+  responseMessage: string;
   questions;
   years = [];
   startYear = 1960;
   endYear = 2017;
   selectedYear: string;
+  fullImagePath;
 
 
   challenges:any = {};
@@ -46,12 +45,17 @@ export class DialogComponent implements OnInit {
       this.appName = params['appName'];
     });
     this.esignAPIUrl = this.apiService.getESignAPIUrl();
+    this.fullImagePath = "../assets/images/sa.jpg";
   }
 
   openDlg(){
+    alert(JSON.stringify(this.challenges));
     let dialogRef = this.dialog.open(DialogOverview, {
-      width: '500px',
-      data: [this.challenges] 
+      width: '45%',
+      data:  { 
+        challenges : this.challenges ,
+        status : this.responseMessage
+       }
     });
 
     dialogRef.afterClosed().subscribe(result => {
@@ -59,22 +63,52 @@ export class DialogComponent implements OnInit {
     });
   }
 
-  ngOnInit() {
-    let headers = new Headers;
-    this.dialogService
-    .getChallenges(1)
-    .subscribe(
-      res => {
-        console.log(res);
-         this.challenges = res;
-         this.openDlg();
-    },
-    err => {
-        console.log(err );
+  //public challenges: IChallenges; 
+  getQuestions() {
+      const headers = new HttpHeaders().append('LOB', this.lineOfBusiness)
+      .append('applicationName', this.appName)
+    //  const url = `${this.esignAPIUrl}/${this.guid}/questions`;
+      const url = "http://localhost:3000/challenges";
+      this.challenges = {
+        "challenges": [
+            {
+                "id": "1",
+                "challenge": "Enter your date of birth",
+                "status": ""
+            }
+        ],
+        "error": null,
+        "additionalProperties": {}
     }
-      
+        return this.http.get<IChallenges>(url, {headers: headers}).subscribe( data => {
+          //this.challenges = data;
+          //console.log(this.challenges);
+          //this.status = "success";
+          //setTimeout(()=>{this.openDlg();},3000)
+
+          this.responseMessage = "success";
+
+          console.log(this.challenges);
+          this.openDlg();
+         },
+         (err: HttpErrorResponse) => {
+          console.log(err.error);
+          console.log(err.name);
+          console.log(err.message);
+          console.log(err.status);
+          if(err.status === 500){
+            this.responseMessage ="Expired link";
+          } else if(err.status === 400) {
+            this.responseMessage ="Invalid Url";
+          }
+          this.openDlg();
+        }
+        );
+  }
+
+  ngOnInit() {
+    this.getQuestions();
     
-    );
   }
 }
 
@@ -89,7 +123,8 @@ export class DialogOverview implements OnInit {
     public dialogRef: MatDialogRef<DialogOverview>,
     @Inject(MAT_DIALOG_DATA) public data: any, public router: Router, public dialogService: DialogService) { 
       this.generateYears(this.startYear, this.endYear);
-      this.challenges = this.data;
+      this.challenges = this.data.challenges.challenges;
+      this.responseMessage = this.data.status;
       this.question = 0;
     }
 
@@ -99,11 +134,14 @@ export class DialogOverview implements OnInit {
     selectedYear;
     valueIncorrect;
     qOne;
+    qOneInfo;
     qTwo;
+    qTwoInfo;
     zipcodeValue;
     question;
     challenges;
     tempChallenges;
+    responseMessage;
 
     generateYears(start, end) {
       for (let year = start; year <= end; year++) {
@@ -111,6 +149,11 @@ export class DialogOverview implements OnInit {
       }
       return this.years;
     };
+
+    closeDialog(){
+    window.location.href = 'https://www.google.com';
+      // After close I want to redirect to google.com
+    }
 
     dialogSubmit(qid){
       if(qid == 1){
@@ -134,19 +177,31 @@ export class DialogOverview implements OnInit {
        
         
         this.qOne = false;
-        this.valueIncorrect = true;
+        this.qOneInfo = true;
         this.qTwo = true;
       }
     }
     else if(qid == 2){
+      if(this.zipcodeValue == 1234){
+        this.dialogRef.close();
+     //   this.router.navigate(['/eDelivery']);
+      }
+      else{
+          this.qOneInfo = true;
+          this.qTwoInfo = true;
+          this.qTwo = false;
+      }
      alert(this.zipcodeValue);
-     this.dialogRef.close();
-     this.router.navigate(['/eDelivery']);
+    
+    
     }
     }
     
     ngOnInit(){
       this.qOne = true;
+      this.qOneInfo = false;
+      this.qTwo = false;
+      this.qTwoInfo = false;
     }
 
   onNoClick(): void {
